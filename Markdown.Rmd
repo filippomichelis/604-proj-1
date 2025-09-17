@@ -1,23 +1,36 @@
 ---
 title: "Untitled"
-output:
-  pdf_document: default
-  html_document: default
-header-includes:
-  - \usepackage{subcaption}
-  - \usepackage{float}
-  - \usepackage{placeins}
+output: html_document
 date: "2025-04-01"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## Cross-plate consistency: t-SNE views before and after control-based normalization
 
-The following shows a t-SNE of the plates after robust z-scoring, colored by the negative control wells. It shows that even after normalization, we do not have equality in the experiments, which significantly bear some lab effects and replicate effects.
+To evaluate reproducibility across labs and replicates, we embed each plate as a point in two dimensions using t-SNE. Plates are visualized with colors for labs, marker shapes for replicates, and numbers inside each point denoting the last digit of the plate ID, also, plates with the same design share the same digit. Three complementary embeddings are shown:
 
-![](figures/tsne_plates_negcontrol_robustz.png)
+1. **Raw per-plate profiles**  
+   - Each plate is represented by the median of all numeric features (including cell counts).  
+   - Features are standardized column-wise for comparability.  
+   - t-SNE is run with Euclidean distance to highlight how plates cluster in the uncorrected feature space.  
+   - Here, separation by color or shape reflects lab and replicate effects that dominate before correction.
 
+2. **Control-standardized per-plate profiles**  
+   - Within each plate, values are normalized using only negative controls (DMSO/EOS).  
+   - For each feature, the control median is subtracted and the values are scaled by 1.4826×MAD (median absolute deviation).  
+   - This yields robust Z-scores anchored to neutral controls, which preserve biological differences while adjusting for technical shifts.  
+   - After normalization, t-SNE reveals whether plates with the same design (same digit) cluster more tightly across labs/replicates.
+
+3. **Well-wise correlation view (after control standardization)**  
+   - Each plate is represented as a vector of per-well standardized cell counts, aligned by well position.  
+   - Spearman correlations are computed between plates; distances are defined as \(1-\rho\).  
+   - Embedding these distances with t-SNE focuses directly on position-matched reproducibility across plates.  
+   - Tight clustering by digit indicates consistent well-level fingerprints across labs and replicates.
+![](figures/tsne_three_panel.png)
+
+rom the raw embedding (first subplot), plates cluster strongly by lab, reflecting a pronounced lab effect. Within some of these lab clusters—particularly in FMP—we also observe distinct replicate-level subclusters, suggesting additional replicate-specific variation. After applying control-based standardization (second subplot), replicate effects disappear, confirming that the normalization reduces within-lab variability. However, lab-level clustering remains visible, meaning that systematic lab differences persist even after normalization. In the well-wise correlation embedding (third subplot), plates that share the same compound set (same plate design) group together across labs and replicates, showing that the biological signal is preserved. Still, residual subclusters by lab are noticeable, indicating that normalization does not fully remove cross-lab biases. This highlights the importance of explicitly modeling and controlling for lab and replicate effects in downstream analyses to avoid confounding biological interpretation.
 
 ## Variance decomposition of controls across labs, replicates, and plates
 
@@ -76,9 +89,12 @@ The distribution has a long rightward tail, meaning many compounds substantially
 
 Control landmarks fall where expected: Tetrandrine lies left of Nocodazole, consistent with a weaker effect; Nocodazole is further right, reflecting a stronger effect.
 
-Within-compound spread (IQR and p05–p95) highlights residual heterogeneity. Narrow bars near zero indicate stable, control-like behavior, while wide bars in the tail suggest stronger or context-dependent effects worth follow-up. In general, we can see different compounds display very different distributions across experiments.
+Within-compound spread (IQR and p05–p95) highlights residual heterogeneity. Narrow bars near zero indicate stable, control-like behavior, while wide bars in the tail suggest stronger or context-dependent effects. This is worth noticing for follow-ups, as it means that we should take into account the entire distribution for assessing the effectiveness of promising compounds. In general, we can see different compounds display very different distributions across experiments.
 
 ![](figures/compound_quantile_lines_neg_rz.png)
+We further highlight this differences in the next plot, where we show the distributions of selected compounds, spanning a range of median effects and variability.
+![](figures/boxplots_between_tet_noc_plus_topmedian_and_topbelowtet.png)
+
 
 ## Clustering Analysis
 
@@ -145,5 +161,6 @@ The following tables also show the list of compounds which we classify as Toxic 
 \includegraphics[width=1.1\linewidth]{../figures/eff_unknown_moa.png}
 \caption{Effective Compounds with Unknown MOA}
 \end{figure}
+
 
 
