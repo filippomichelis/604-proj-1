@@ -1,0 +1,77 @@
+---
+title: "Part 2 — Heatmaps after normalization"
+output:
+  html_document: default
+  pdf_document:
+    fig_caption: true
+geometry: margin=0.8in
+header-includes:
+  - \usepackage{float}
+date:
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+```
+
+# Normalization of Cell Count and Nucleus Area
+
+This normalization aimed to remove replicate-specific shifts and scale differences while preserving genuine structure within plates. The resulting heatmaps of normalized cell count and normalized nucleus area, shown in the figures heatmap_normalized_cellcount.png and heatmap_normalized_nucleusarea.png, allow us to assess the effect of this adjustment.
+
+```{r fig_norm, fig.cap="Normalized cell-count and nucleus area heatmaps (replicate × site). Site-specific bias is visible.", fig.show='hold', out.width='48%', fig.align='center'}
+knitr::include_graphics(c("figures/part2/heatmap_normalized_cellcount.png","figures/part2/heatmap_normalized_nucleusarea.png"))
+```
+
+After normalization, replicates within each site now display very similar spatial patterns. The plate-level structures remain, such as gradients along rows or columns and quadrant-specific shifts, but these structures are now reproducible across replicates. This indicates that replicate-level biases, which likely arose from batch-to-batch variability in handling, incubation, or measurement, have been effectively removed by the normalization.
+
+Even after normalization, the heatmaps show clear differences between sites. Each laboratory still has its own spatial fingerprint: one may show a left-to-right gradient, another a top-to-bottom shift, and another localized high or low regions. These patterns are consistent across the four replicates within a site, so they are not random, but they differ systematically from lab to lab. The same is true for nucleus area, where replicates within a site agree but the overall patterns between sites remain distinct. In fact, the differences in nucleus area are sometimes even stronger, suggesting systematic variation in imaging or segmentation. Since the treatments and compound positions are identical across all sites, these site-to-site differences cannot be biological. Instead, they reflect technical factors such as imaging settings, incubation conditions, or handling practices.
+
+The implications of this observation are important. While the normalization clearly succeeded in removing replicate-level biases within each laboratory, it did not eliminate site-level biases. The dominant variation across the dataset is still linked to site-specific technical effects. If compounds are compared or ranked without accounting for these residual differences, the results may reflect laboratory-specific artifacts rather than genuine biological activity. Aggregating results across sites in the absence of further correction could therefore obscure true biological signals and undermine reproducibility.
+
+
+# Correlation Analysis of Normalized Cell Counts
+
+After applying plate-wise median and MAD normalization to cell counts and nucleus area, the replicate-level biases within each laboratory were largely removed. However, as seen in the normalized heatmaps, site-specific spatial fingerprints remained, raising the concern that substantial technical variation still separates the data generated in different laboratories. To validate the presence of these site-specific effects in a more quantitative way, we constructed a correlation heatmap across all site–replication combinations. 
+
+For each site and replication, all normalized cell counts were concatenated into a single vector. This produced sixteen vectors in total, one for each of the four sites and four replicates. We then computed the Pearson correlation between every pair of these vectors, resulting in a 16×16 correlation matrix. The heatmap displays these correlations, with darker colors corresponding to lower correlations and lighter colors to stronger positive associations. The matrix is symmetric, with blocks along the diagonal corresponding to the four replicates within each site.
+
+
+```{r fig_norm_corr, fig.cap="Correlation of normalized cell counts (replicate × site). Site-specific bias is visible.", out.width='50%', fig.pos='H'}
+knitr::include_graphics("figures/part2/heatmap_correlation.png")
+```
+
+The pattern in this heatmap is very informative. Within each site, the correlations between replicates are uniformly high. In the FMP block, for example, all four replicates are highly correlated with one another. The same is true for IMTM, MEDINA, and USC. This confirms what was already suggested by the normalized heatmaps: after normalization, the replicates within a site are strongly aligned, and replicate-to-replicate variation has been effectively removed. The normalization succeeded at the within-lab level.
+
+In contrast, the correlations between different sites are much lower. Comparisons of a replicate from FMP with one from MEDINA, or IMTM with USC, generally yield only moderate correlations, which stand in stark contrast to the near-perfect correlations observed within a site. These reduced correlations are consistent across the entire matrix, meaning the phenomenon is not limited to one problematic site. Instead, each laboratory retains its own reproducible but distinct profile. This divergence cannot be attributed to biology, since the compounds and well assignments are identical across sites. The low cross-site correlations are therefore direct evidence of residual site-specific technical biases.
+
+The interpretation is that the normalization procedure aligned replicates within each laboratory, but did not harmonize across laboratories. The correlation heatmap is particularly valuable because it validates this conclusion in a rigorous and quantitative way. While qualitative inspection of heatmaps could suggest site-specific patterns, the correlation matrix demonstrates unambiguously that replicates from the same lab cluster together while replicates from different labs diverge. The clustering visible in the heatmap makes the argument especially clear: the matrix shows four tight, high-correlation blocks on the diagonal (one per lab), but much weaker associations between blocks.
+
+
+# Site-Averaged Normalized Cell Counts
+
+To further investigate site-specific biases after normalization, we averaged the normalized cell counts across the four replicates within each laboratory. This aggregation reduces replicate-to-replicate noise and emphasizes the stable patterns that characterize each site. For each plate, we then visualized the averaged values in the form of heatmaps. The figures below present these results for plates 2 and 3 respectively. Each figure contains four heatmaps, corresponding to the four sites (FMP, IMTM, MEDINA, and USC). Within each panel, the color represents the site-averaged normalized cell count for each well on the plate.
+
+```{r fig_avg, fig.cap="Average normalized cell count (plate 2, 3). Site-specific bias is visible.", fig.show='hold', out.width='48%', fig.align='center'}
+knitr::include_graphics(c("figures/part2/avg/heatmap_avg_cellcount_plate2.png","figures/part2/avg/heatmap_avg_cellcount_plate3.png"))
+```
+
+When examining these heatmaps, a clear observation emerges. Across the four sites, the spatial patterns within a given plate are remarkably similar. In plate 2, for instance, regions of high and low cell count appear in corresponding positions across all four sites, and the same is true in plate 3. This consistency strongly suggests that the underlying structure of the heatmap reflects the biological signal of compound effects. Since the compounds occupy the same wells in all plates, the repeated emergence of these patterns across laboratories validates that they are not artifacts of handling or imaging, but rather reproducible biological effects driven by the compounds themselves.
+
+At the same time, there are clear differences in color intensity across the sites. One laboratory may show the same spatial pattern as another, but with consistently brighter or darker shading. This indicates that although the spatial structure is preserved, the overall scale of the normalized responses differs between laboratories. Such intensity differences are not expected from biology, because the compounds are identical, and their effects on cell count should be invariant across sites. Instead, these shifts represent site-specific technical biases that were not eliminated by the normalization. Possible sources include differences in imaging equipment, segmentation thresholds, or systematic differences in growth conditions between laboratories.
+
+# Site-Specific Variance Across Plates
+
+To directly visualize the degree of site-specific bias that remains after normalization, we computed the variance of normalized cell counts across replications within each laboratory. For every plate, the normalized values were averaged within site–replication groups, and then the variance across replicates within the same site was calculated for each well. This produced a variance heatmap for each site and plate. Figures below present the results for plates 1 and 2. In each heatmap, lighter colors indicate higher variance across replicates within a site, while darker colors indicate lower variance, i.e., greater consistency within a site.
+
+```{r fig_var12, fig.cap="Variance normalized cell count (plate 1,2). Site-specific bias is visible.", fig.show='hold', out.width='48%', fig.align='center'}
+knitr::include_graphics(c("figures/part2/var/heatmap_var_cellcount_plate1.png","figures/part2/var/heatmap_var_cellcount_plate2.png"))
+```
+
+The patterns in plates 1 and 2 illustrate clear differences in site-specific variability. FMP shows very small variance across its replicates, producing relatively dark and uniform heatmaps, which suggests that the experiments conducted at FMP were internally consistent and replicates were well aligned by normalization. By contrast, IMTM exhibits much higher variance, as shown by brighter colors in the corresponding heatmaps. This indicates that replicate-to-replicate consistency within IMTM is weaker, and technical variability across repetitions remains higher at this site. MEDINA and USC lie between these extremes, with intermediate levels of replicate variance. The conclusion from plates 1 and 2 is that site-specific reliability differs markedly: some sites, like FMP, generate highly reproducible replicates, while others, like IMTM, are more prone to replicate-level noise even after normalization.
+
+```{r fig_var67, fig.cap="Variance normalized cell count (plate 6,7). Site-specific bias is visible.", fig.show='hold', out.width='48%', fig.align='center'}
+knitr::include_graphics(c("figures/part2/var/heatmap_var_cellcount_plate6.png","figures/part2/var/heatmap_var_cellcount_plate7.png"))
+```
+
+When we examine the variance heatmaps for plates 6 and 7 (heatmap_var_cellcount_plate6.png and heatmap_var_cellcount_plate7.png), the picture changes. FMP, which showed very low variance in plates 1 and 2, now displays much noisier patterns, with brighter regions indicating increased variability across replicates. Moreover, in plate 6, USC exhibits extremely high variance, far greater than in earlier plates, pointing to unstable replicate behavior for this particular plate in that site. These findings imply that site-specific biases are not fixed characteristics of a laboratory but vary depending on the plate. Each plate seems to carry its own susceptibility to site-specific technical effects, with certain sites showing stable behavior for some plates but becoming noisy for others. This may be due to subtle differences in handling, incubation, or imaging conditions that interact with plate-specific properties, or to plate-specific spatial effects that are more difficult for some laboratories to control.
+
