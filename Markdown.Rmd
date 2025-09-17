@@ -1,6 +1,12 @@
 ---
 title: "Untitled"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
+header-includes:
+  - \usepackage{subcaption}
+  - \usepackage{float}
+  - \usepackage{placeins}
 date: "2025-04-01"
 ---
 
@@ -73,4 +79,71 @@ Control landmarks fall where expected: Tetrandrine lies left of Nocodazole, cons
 Within-compound spread (IQR and p05–p95) highlights residual heterogeneity. Narrow bars near zero indicate stable, control-like behavior, while wide bars in the tail suggest stronger or context-dependent effects worth follow-up. In general, we can see different compounds display very different distributions across experiments.
 
 ![](figures/compound_quantile_lines_neg_rz.png)
+
+## Clustering Analysis
+
+In this section, we perform clustering of compounds to better understand their behavior relative to the controls (DMSO as negative control, and Nocodazole and Tetrandrine as positive controls).
+
+### Addressing replicate and lab bias
+In earlier analyses we observed significant sources of variation due to **lab, replicate, and plate effects**. Even after standardizing each feature by subtracting the median and dividing by the MAD of DMSO features within each plate, residual bias persisted across sites. To evaluate which site provided the most consistent replicates, we studied the **average cosine similarity** of feature vectors across replicate pairs. For each well, we compared the standardized feature vectors across replicates using cosine of the angle between them. Then we averaged the cosine similarities by aggregating across wells.
+
+Formally, the average cosine similarity between replicates $i$ and $j$ from labs $A$ and $B$ is defined as
+
+$$
+S_{(A,i),(B,j)} = \frac{1}{|W|} \sum_{w \in W} 
+\frac{\langle x^{(A)}_{w,i},\, x^{(B)}_{w,j} \rangle}{\|x^{(A)}_{w,i}\| \, \|x^{(B)}_{w,j}\|}.
+$$
+where $x_{w,i}^{(A)}$ represents the standardised feature vector of well $w$ in replicate $i$ of lab A. Here, $i,j \in \{1,\ldots,4\}, A,B \in \{FMP,IMTM,MEDINA,USC\}$ and $W:=$ set of unique well id's. If the treatment effect were dominant in all replications, we would expect these similarities to be close to one and hence $S_{(A,i),(B,j)}$ would be close to one for all $A,b,i,j$.
+
+The heatmap in Figure \@ref(fig:cosine_replicate_matrix) shows that cross-lab similarities were low overall. Within-site comparisons, however, revealed that the **FMP site** displayed the highest replicate consistency (darker red shades). Consequently, we restricted subsequent clustering analyses to FMP data.
+
+### Dimensionality reduction and clustering
+For clustering, we projected the standardized FMP feature vectors onto the principal component space. The first 14 principal components (PCs), explaining 80% of the total variance, were retained. For each well, the PC scores were then averaged across replicates, producing a single representative 14-dimensional vector per well. Because each replicate within lab FMP showed highest similarity, they can be assumed to demonstrate effect of treatment in each well independently without any confounding factors. As a result, averaging features of each well across replicates just strengthens the biological signal in the data and avoids identical wells across replicates from clustering together.
+
+On these averaged PC scores, we applied Ward’s hierarchical clustering with five clusters. We chose Ward’s method for clustering as it is an agglomerative hierarchical clustering algorithm that iteratively merges clusters to minimize the increase in within-cluster variance, thereby producing compact and well-separated clusters.
+
+```{r clustering1, fig.cap="Average cosine similarity between replicate pairs across labs. FMP displays the highest consistency.", echo=FALSE, out.width="40%", fig.align='center', fig.pos='H'}
+knitr::include_graphics("../figures/cosine_replicate_matrix.png")
+```
+```{r,fig.cap="Capture Rate Table of each cluster",echo=FALSE,  out.width="50%", fig.align='center', fig.pos='H'}
+knitr::include_graphics("../figures/FMP_capture_rates.png")
+```
+
+### Interpretation of clusters
+The capture rate plot (Figure @ref(fig:FMP_capture_rates)) shows that the three controls (DMSO, Nocodazole, Tetrandrine) each fall into separate clusters, validating the effectiveness of the method in identifying the feature vector corresponding to control compounds perfectly. The plot then tells us that
+
+- approximately 70.6% compounds that were tested were neutral like DMSO,
+- about 12.4% function like Nocodazole and inhibit cell division,
+- about 4.2% function like Tetrandrine and implement similar anti-cancer methods,
+
+Examining the distribution of standardized cell counts across clusters (Figure @ref(fig:FMP_consensus_Ward_median_std_count)), we also observe:
+
+- Cluster 5 has a dangerously low median of within-cluster standardised cell counts. This  indicates that the treatment compounds in the wells of this cluster are likely toxic and kill cells indiscriminately. There are 1.6% of these compounds.
+- Cluster 3 has compounds which result in a negative median of standardised cell counts. This indicates effectiveness, but since their feature vectors were not similar to Nocodazole and Tetrandrine their mechanisms of action (MOA) are subject for further experimentation. There are 11.2% of such compounds.
+
+```{r,fig.cap="Within cluster median standardized cell count",echo=FALSE, out.width="70%", fig.align='center', fig.pos='H'}
+knitr::include_graphics("../figures/FMP_Ward_median_std_count_crop.png")
+```
+
+Finally, we visualized the distribution of clusters across plates (Figure @ref(fig:FMP_consensus_Ward_k5_plate_maps)). This provides a spatial view of how compounds grouped in the clustering analysis.
+
+```{r,fig.cap="Plates colored according to cluster assignment",echo=FALSE,out.width="100%", fig.align='center', fig.pos='H'}
+knitr::include_graphics("../figures/FMP_consensus_Ward_k5_plate_maps_one_row.png")
+
+```
+
+The following tables also show the list of compounds which we classify as Toxic or Effective compounds with Unknown MOA. We include a list of Nocodazole like and Tetrandrine like compounds in our github as well.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\linewidth]{../figures/toxic.png}
+\caption{Toxic Compounds}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.1\linewidth]{../figures/eff_unknown_moa.png}
+\caption{Effective Compounds with Unknown MOA}
+\end{figure}
+
 
