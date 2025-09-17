@@ -27,7 +27,7 @@ In the raw heat maps, color directly reflects magnitude on a perceptually unifor
 ## Raw cell-count heatmaps (replicate × site)
 
 ```{r fig_counts, fig.cap="Raw cell-count heatmaps (replicate × site). Spatial structure is visible at multiple scales.", out.width='50%', fig.pos='H'}
-knitr::include_graphics("Plots/Cell_num.png")
+knitr::include_graphics("figures/Cell_num.png")
 ```
 
 **Observations and patterns.** The raw count maps show clear spatial structure within and across plates. Within plates, vertical and horizontal banding point to column and row effects, while pronounced borders indicate edge-related evaporation or illumination falloff. Across concatenated plates, step changes at the joins reveal plate-specific baselines. Large differences are evident **across sites** and even **across replicates within the same site**. In particular, the **MEDINA** panels display a striking inversion: in **replicate 1**, the **first two plates** are warm/yellow (higher counts) while the later plates are cool/blue (lower counts); in **replicate 3** the pattern **reverses**—early plates are low and later plates high. This flip within a single site across runs cannot be explained by biology and points to **replication-specific shifts**. Together with cross-site level offsets and the plate-wise steps, the conclusion is that **strong site-, replicate-, and plate-level technical biases dominate the raw signal**.
@@ -37,7 +37,7 @@ knitr::include_graphics("Plots/Cell_num.png")
 ## Plate and site biases (counts by site × plate summary)
 
 ```{r fig_siteplate, fig.cap="Counts summarized by site and plate. Baseline shifts are systematic rather than random noise.", out.width='50%', fig.pos='H'}
-knitr::include_graphics("Plots/Cell_counts_vs_siteplate.png")
+knitr::include_graphics("figures/Cell_counts_vs_siteplate.png")
 ```
 
 **Observations and patterns.** The site–plate summary makes the contrasts explicit. **FMP** shows **little to no difference** across its seven plates—the boxplots align closely in level and spread—indicating minimal within-site plate effect for this lab. By contrast, **MEDINA** exhibits pronounced between-plate shifts (several plates sit markedly higher than others), and **IMTM** shows clear plate-to-plate differences as well (a visible gradient where some mid-block plates are higher than early or late ones). These behaviors are signatures of **plate bias within sites** and, when comparing across the four colors (sites), **site-level baseline offsets**. Without plate-wise, site-wise normalization, such baselines will distort any cross-site or cross-plate comparison.
@@ -47,7 +47,7 @@ knitr::include_graphics("Plots/Cell_counts_vs_siteplate.png")
 ## Replication bias (site example across replicates)
 
 ```{r fig_rep, fig.cap="Example of replicate-to-replicate variability within a site.", out.width='50%', fig.pos='H'}
-knitr::include_graphics("Plots/Medina_cell_count_vs_rep.png")
+knitr::include_graphics("figures/Medina_cell_count_vs_rep.png")
 ```
 
 **Observations and patterns.**In the earlier overall heatmap, the **first two plates** appeared higher than later plates at this site; however, when we **split by replicate** that pattern **does not hold for all runs**. For example, in **R1** the early plates are high while later plates are low, whereas in **R3** the relationship **reverses**. This inconsistency across runs is a hallmark of **replication bias**—run-specific shifts in level and dispersion—often driven by day-to-day instrument settings, reagent batches, or environmental conditions. Therefore, averaging replicates without **within-replicate** normalization would confound technical drift with biology and should be avoided.
@@ -56,7 +56,7 @@ knitr::include_graphics("Plots/Medina_cell_count_vs_rep.png")
 ## Raw nucleus-area heatmaps (replicate × site)
 
 ```{r fig_nuc, fig.cap="Raw nucleus-area heatmaps (replicate × site). Complementary view to counts.", out.width='50%', fig.pos='H'}
-knitr::include_graphics("Plots/Nuc_area.png")
+knitr::include_graphics("figures/Nuc_area.png")
 ```
 
 **Observations and patterns.** The nucleus‑area maps are comparatively stable across sites and replicates. Most plates fall in a similar value range with modest variation, and we do **not** see the strong inversions that were evident in the raw cell‑count maps. A few localized regions show slightly higher (warmer) or lower (cooler) nucleus‑area values, but these pockets are limited in extent. MEDINA, for example, shows far smaller between‑plate swings in nucleus area than it does in counts; IMTM exhibits mild plate‑to‑plate differences; FMP and USC are largely flat. Overall, the nucleus‑area readout varies **less** across sites/replicates than cell counts, with only isolated high/low patches rather than large cross‑site shifts.
@@ -64,7 +64,7 @@ knitr::include_graphics("Plots/Nuc_area.png")
 ## Additional features: nucleus intensity channels (AGP, DNA, Mito, ER)
 
 ```{r fig_intensity, fig.cap="Nucleus median intensity (AGP, DNA, Mito, ER) shown as heatmaps (replicate × site) with a shared color scale across channels.", out.width='90%', fig.pos='H'}
-knitr::include_graphics("Plots/Nuc_Intensity_grid.png")
+knitr::include_graphics("figures/Nuc_Intensity_grid.png")
 ```
 
 **Observations and patterns.** Across channels, the overall dynamic range is modest and most panels occupy a similar value band, indicating broadly comparable staining across sites. The **ER** channel stands out: **IMTM** shows noticeably **higher intensities** than the other sites in multiple replicates and a wider spread across plates, while **FMP** and **USC** remain uniformly **lower**. **MEDINA** is intermediate and shows some plate-to-plate changes but not the large inversions seen in raw cell counts. For **AGP** and **DNA**, intensities are relatively flat across sites with only small plate steps. **Mito** shows a mild elevation at **IMTM** relative to the other sites. Importantly, within **FMP**, **replicate 4** shows **elevated ER and Mito intensities** compared with FMP’s other replicates, suggesting a replicate-specific shift for these channels. In short, the intensity readouts exhibit **site offsets** (especially ER at IMTM) and **plate-level steps** in a few cases, with **replicate‑level elevation at FMP R4 for ER/Mito**; deviations are **largest for ER at IMTM**, moderate for Mito, and **smallest for AGP/DNA**. These patterns reinforce the presence of **site**, **plate**, and **replicate** effects in auxiliary features as well, and support channel-wise robust normalization if these readouts are used downstream.
@@ -73,7 +73,7 @@ knitr::include_graphics("Plots/Nuc_Intensity_grid.png")
 ## Cell-count distributions (boxplots)
 
 ```{r fig_box, fig.cap="Cell-count distributions (boxplots). Structure is consistent across sites and replicates, but medians/levels shift.", out.width='50%', fig.pos='H'}
-knitr::include_graphics("Plots/Box_plot_cell_count.png")
+knitr::include_graphics("figures/Box_plot_cell_count.png")
 ```
 
 **Observations and patterns.** The overall **shape** of the distributions is remarkably similar across sites and across replicates (comparable IQRs and tail behavior), but the **location** (medians) shifts systematically. This is precisely the signature of global baseline differences rather than wholesale distributional changes. Because DMSO is present on every plate and designed to represent the neutral baseline, these boxplots motivate a **control-anchored normalization**: centering each plate × replicate × site on the **DMSO median** and scaling by a robust spread such as **MAD**. This approach directly targets level shifts while preserving the underlying distribution shape and makes comparisons across sites and runs more meaningful.
