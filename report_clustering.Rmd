@@ -37,10 +37,10 @@ For clustering, we projected the standardized FMP feature vectors onto the princ
 On these averaged PC scores, we applied Ward’s hierarchical clustering with five clusters. We chose Ward’s method for clustering as it is an agglomerative hierarchical clustering algorithm that iteratively merges clusters to minimize the increase in within-cluster variance, thereby producing compact and well-separated clusters.
 
 ```{r clustering1, fig.cap="Average cosine similarity between replicate pairs across labs. FMP displays the highest consistency.", echo=FALSE, out.width="40%", fig.align='center', fig.pos='H'}
-knitr::include_graphics("cosine_replicate_matrix.png")
+knitr::include_graphics("../figures/cosine_replicate_matrix.png")
 ```
 ```{r,fig.cap="Capture Rate Table of each cluster",echo=FALSE,  out.width="50%", fig.align='center', fig.pos='H'}
-knitr::include_graphics("FMP_capture_rates.png")
+knitr::include_graphics("../figures/FMP_capture_rates.png")
 ```
 
 ### Interpretation of clusters
@@ -52,31 +52,31 @@ The capture rate plot (Figure @ref(fig:FMP_capture_rates)) shows that the three 
 
 Examining the distribution of standardized cell counts across clusters (Figure @ref(fig:FMP_consensus_Ward_median_std_count)), we also observe:
 
-- Cluster 5 has a dangerously low median of within-cluster standardised cell counts. This  indicates that the treatment compounds in the wells of this cluster are likely toxic and kill cells indiscriminately.
-- Cluster 3 has compounds which result in a negative median of standardised cell counts. This indicates effectiveness, but since their feature vectors were not similar to Nocodazole and Tetrandrine their mechanisms of action (MOA) are subject for further experimentation.
+- Cluster 5 has a dangerously low median of within-cluster standardised cell counts. This  indicates that the treatment compounds in the wells of this cluster are likely toxic and kill cells indiscriminately. There are 1.6% of these compounds.
+- Cluster 3 has compounds which result in a negative median of standardised cell counts. This indicates effectiveness, but since their feature vectors were not similar to Nocodazole and Tetrandrine their mechanisms of action (MOA) are subject for further experimentation. There are 11.2% of such compounds.
 
 ```{r,fig.cap="Within cluster median standardized cell count",echo=FALSE, out.width="70%", fig.align='center', fig.pos='H'}
-knitr::include_graphics("FMP_Ward_median_std_count_crop.png")
+knitr::include_graphics("../figures/FMP_Ward_median_std_count_crop.png")
 ```
 
 Finally, we visualized the distribution of clusters across plates (Figure @ref(fig:FMP_consensus_Ward_k5_plate_maps)). This provides a spatial view of how compounds grouped in the clustering analysis.
 
 ```{r,fig.cap="Plates colored according to cluster assignment",echo=FALSE,out.width="100%", fig.align='center', fig.pos='H'}
-knitr::include_graphics("FMP_consensus_Ward_k5_plate_maps_one_row.png")
+knitr::include_graphics("../figures/FMP_consensus_Ward_k5_plate_maps_one_row.png")
 
 ```
 
-The following tables show the list of compounds which we classify as Toxic or Effective compounds with Unknown MOA:
+The following tables also show the list of compounds which we classify as Toxic or Effective compounds with Unknown MOA. We include a list of Nocodazole like and Tetrandrine like compounds in our github as well.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.5\linewidth]{toxic.png}
+\includegraphics[width=0.5\linewidth]{../figures/toxic.png}
 \caption{Toxic Compounds}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.1\linewidth]{eff_unknown_moa.png}
+\includegraphics[width=1.1\linewidth]{../figures/eff_unknown_moa.png}
 \caption{Effective Compounds with Unknown MOA}
 \end{figure}
 
