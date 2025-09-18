@@ -164,30 +164,19 @@ In this section, we aim to assess compound effectiveness by providing a prelimin
 
 To evaluate reproducibility across labs and replicates, we embed each plate as a point in two dimensions using t-SNE. Plates are visualized with colors for labs, marker shapes for replicates, and numbers inside each point denoting the last digit of the plate ID, also, plates with the same design share the same digit. Three complementary embeddings are shown:
 
-1. **Raw per-plate profiles**  
-   - Each plate is represented by the median of all numeric features (including cell counts).  
-   - Features are standardized column-wise for comparability.  
-   - t-SNE is run with Euclidean distance to highlight how plates cluster in the uncorrected feature space.  
-   - Here, separation by color or shape reflects lab and replicate effects that dominate before correction.
+(1) **Raw per-plate profiles**: Each plate is represented by the median of all numeric features (including cell counts), Features are standardized column-wise for comparability. t-SNE is run with Euclidean distance to highlight how plates cluster in the uncorrected feature space. Here, separation by color or shape reflects lab and replicate effects that dominate before correction.
 
-2. **Control-standardized per-plate profiles**  
-   - Within each plate, values are normalized using only negative controls (DMSO/EOS).  
-   - For each feature, the control median is subtracted and the values are scaled by 1.4826×MAD (median absolute deviation).  
-   - This yields robust Z-scores anchored to neutral controls, which preserve biological differences while adjusting for technical shifts.  
-   - After normalization, t-SNE reveals whether plates with the same design (same digit) cluster more tightly across labs/replicates.
+(2) **Control-standardized per-plate profiles**: Within each plate, values are normalized using only negative controls (DMSO/EOS). For each feature, the control median is subtracted and the values are scaled by 1.4826×MAD (median absolute deviation). This yields robust Z-scores anchored to neutral controls, which preserve biological differences while adjusting for technical shifts. After normalization, t-SNE reveals whether plates with the same design (same digit) cluster more tightly across labs/replicates.
 
-3. **Well-wise correlation view (after control standardization)**  
-   - Each plate is represented as a vector of per-well standardized cell counts, aligned by well position.  
-   - Spearman correlations are computed between plates; distances are defined as \(1-\rho\).  
-   - Embedding these distances with t-SNE focuses directly on position-matched reproducibility across plates.  
-   - Tight clustering by digit indicates consistent well-level fingerprints across labs and replicates.
+(3) **Well-wise correlation view (after control standardization)**: Each plate is represented as a vector of per-well standardized cell counts, aligned by well position. Spearman correlations are computed between plates; distances are defined as \(1-\rho\). Embedding these distances with t-SNE focuses directly on position-matched reproducibility across plates. Tight clustering by digit indicates consistent well-level fingerprints across labs and replicates.
 ![](figures/tsne_three_panel.png)
 
 From the raw embedding (first subplot), plates cluster strongly by lab, reflecting a pronounced lab effect. Within some of these lab clusters—particularly in FMP—we also observe distinct replicate-level subclusters, suggesting additional replicate-specific variation. After applying control-based standardization (second subplot), replicate effects disappear, confirming that the normalization reduces within-lab variability. However, lab-level clustering remains visible, meaning that systematic lab differences persist even after normalization. In the well-wise correlation embedding (third subplot), plates that share the same compound set (same plate design) group together across labs and replicates, showing that the biological signal is preserved. Still, residual subclusters by lab are noticeable, indicating that normalization does not fully remove cross-lab biases. This highlights the importance of explicitly modeling and controlling for lab and replicate effects in downstream analyses to avoid confounding biological interpretation.
 
 ### Variance decomposition of controls across labs, replicates, and plates
 
-To assess sources of variability in our assay, we performed a **nested variance decomposition** on three control compounds: **DMSO** (negative control), **Nocodazole**, and **Tetrandrine** (positive controls). We decompose the per–well cell counts $y$ into nested sources of variation. In particular, we decompose the variance as:$$
+To assess sources of variability in our assay, we performed a **nested variance decomposition** on three control compounds: **DMSO** (negative control), **Nocodazole**, and **Tetrandrine** (positive controls). We decompose the per–well cell counts $y$ into nested sources of variation. In particular, we decompose the variance as:
+$$
 \begin{aligned}
 \sigma^2_{\text{Lab}} &= \mathrm{Var}(y) - \mathrm{Var}(r_1),\\[6pt]
 \sigma^2_{\text{Rep}\mid\text{Lab}} &= \mathrm{Var}(r_1) - \mathrm{Var}(r_2),\\[6pt]
@@ -198,7 +187,11 @@ $$
 
 Where let $r_i$ denote the residuals after subtracting the corresponding conditional mean. For interpretability, we discard the residual component, which captures well-specific noise not explained by systematic factors, and renormalize the systematic parts so that their proportions sum to one. We perform this decomposition for each control compound separately.
 
-![](figures/variance_no_residual_controls_combined.png)
+\begin{figure}
+\centering
+\includegraphics[width=0.3\linewidth]{figures/variance_no_residual_controls_combined.png}
+\caption{Toxic Compounds}
+\end{figure}
 
 -   **DMSO (negative control)**\
     The majority of variance is attributable to **lab-level effects** (\~60%), with smaller contributions from replicate (\~12%) and plate (\~29%). This indicates that even the baseline control is sensitive to systematic differences between labs.
