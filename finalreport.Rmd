@@ -1,5 +1,5 @@
 ---
-title: "STATS 604 Project 1 Report"
+title: "STATS 604 Project 1: Exploratory Data Analysis for Cell Imaging data"
 author: "Parijat Chakraborty, Seyong Hwang, Filippo Michelis, Dhruba Nandi"
 output:
   pdf_document:
@@ -10,7 +10,6 @@ header-includes:
   - \usepackage{subcaption}
   - \usepackage{placeins}
   - \usepackage{float}
-date:
 ---
 
 ```{r setup, include=FALSE}
@@ -178,7 +177,7 @@ To evaluate reproducibility across labs and replicates, we embed each plate as a
 \caption{t-SNE for plates}
 \end{figure}
 
-From the raw embedding (first subplot), plates cluster strongly by lab, reflecting a pronounced lab effect. Within some of these lab clusters—particularly in FMP—we also observe distinct replicate-level subclusters, suggesting additional replicate-specific variation. After applying control-based standardization (second subplot), replicate effects disappear, confirming that the normalization reduces within-lab variability. However, lab-level clustering remains visible, meaning that systematic lab differences persist even after normalization. In the well-wise correlation embedding (third subplot), plates that share the same compound set (same plate design) group together across labs and replicates, showing that the biological signal is preserved. Still, residual subclusters by lab are noticeable, indicating that normalization does not fully remove cross-lab biases. This highlights the importance of explicitly modeling and controlling for lab and replicate effects in downstream analyses to avoid confounding biological interpretation.
+From the raw embedding (first subplot), plates cluster strongly by lab, reflecting a pronounced lab effect. Within some of these lab clusters—particularly in FMP—we also observe distinct replicate-level subclusters, suggesting additional replicate-specific variation. After applying control-based standardization (second subplot), replicate effects disappear, confirming that the normalization reduces within-lab variability. However, lab-level clustering remains visible, meaning that systematic lab differences persist even after normalization. In the well-wise correlation embedding (third subplot), plates that share the same compound set (same plate design) group together across labs and replicates, showing that the biological signal is preserved. Interestingly, two plates (1,7) from IMTM and USC appear to be swapped in the clusters. This might indicate mislabelling and should be analyzed deeper for other downstream analysis. Generally in the third subplot, residual subclusters by lab are noticeable, indicating that normalization does not fully remove cross-lab biases. This highlights the importance of explicitly modeling and controlling for lab and replicate effects in downstream analyses to avoid confounding biological interpretation.
 
 ### Variance decomposition of controls across labs, replicates, and plates
 
@@ -234,7 +233,7 @@ Control landmarks fall where expected: Tetrandrine lies left of Nocodazole, cons
 
 Within-compound spread (IQR and p05–p95) highlights residual heterogeneity. Narrow bars near zero indicate stable, control-like behavior, while wide bars in the tail suggest stronger or context-dependent effects. This is worth noticing for follow-ups, as it means that we should take into account the entire distribution for assessing the effectiveness of promising compounds. In general, we can see different compounds display very different distributions across experiments.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics{figures/compound_quantile_lines_neg_rz.png}
 \caption{Distribution of the effects of compounds on cell-counts across replicates and labs.}
@@ -326,11 +325,3 @@ At the compound level, the distribution of effectiveness is heterogeneous. The s
 For clustering, we restricted attention to the FMP site, due to it's replicates having the least amount of bias. We projected standardized features onto the first 14 principal components (capturing at least 80% of the variance), averaged PC scores across replicates per well, and applied Ward’s hierarchical clustering with five clusters. The capture-rate view (Figure 13) confirms that the three controls (DMSO, Nocodazole, Tetrandrine) separate cleanly into distinct clusters, validating the method. Cluster-wise medians of standardized cell counts (Figure 14) reveal two particularly actionable groups: a toxic cluster with the lowest medians (Cluster 5) and a cluster of effective compounds whose behavior is not Nocodazole- or Tetrandrine-like (Cluster 3). The plate maps colored by cluster assignments (Figure 15) provide a spatial overview of how these groups distribute across wells.
 
 Methodologically and experimentally, these observations motivate a few concrete steps. In future experiments, randomizing well positions within each replicate will help break residual spatial confounding and reduce position-dependent bias. In analysis, models should include site and replicate effects (e.g., via fixed or mixed effects), continue to use control-based normalization, and incorporate plate-specific quality control to identify outliers or unstable plates before aggregation. Compound summarization should rely on distributional views rather than a single measure. For follow-up experimentation, Cluster-3 candidates (Figure 17) need to be investigated to understand how their mechanisms are distinct from the two positive controls, while compounds in the toxic cluster (Figure 16) should be handled accordingly. Finally, rerunning a targeted subset of plates at lower-reliability sites with improved quality control and randomization can test whether normalization narrows the cross-lab gaps that remain visible in the normalized summaries and correlation structures.
-
-
-
-
-
-
-
-
