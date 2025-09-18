@@ -2,11 +2,13 @@
 title: "STATS 604 Project 1 Report"
 author: "Parijat Chakraborty, Seyong Hwang, Filippo Michelis, Dhruba Nandi"
 output:
-  html_document: default
   pdf_document:
     fig_caption: true
+  html_document: default
 geometry: margin=0.8in
 header-includes:
+  - \usepackage{subcaption}
+  - \usepackage{placeins}
   - \usepackage{float}
 date:
 ---
@@ -170,7 +172,7 @@ To evaluate reproducibility across labs and replicates, we embed each plate as a
 (2) **Control-standardized per-plate profiles**: Within each plate, values are normalized using only negative controls (DMSO/EOS). For each feature, the control median is subtracted and the values are scaled by 1.4826×MAD (median absolute deviation). This yields robust Z-scores anchored to neutral controls, which preserve biological differences while adjusting for technical shifts. After normalization, t-SNE reveals whether plates with the same design (same digit) cluster more tightly across labs/replicates.
 
 (3) **Well-wise correlation view (after control standardization)**: Each plate is represented as a vector of per-well standardized cell counts, aligned by well position. Spearman correlations are computed between plates; distances are defined as \(1-\rho\). Embedding these distances with t-SNE focuses directly on position-matched reproducibility across plates. Tight clustering by digit indicates consistent well-level fingerprints across labs and replicates.
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics{figures/tsne_three_panel.png}
 \caption{t-SNE for plates}
