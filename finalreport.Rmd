@@ -173,7 +173,7 @@ To evaluate reproducibility across labs and replicates, we embed each plate as a
 (3) **Well-wise correlation view (after control standardization)**: Each plate is represented as a vector of per-well standardized cell counts, aligned by well position. Spearman correlations are computed between plates; distances are defined as \(1-\rho\). Embedding these distances with t-SNE focuses directly on position-matched reproducibility across plates. Tight clustering by digit indicates consistent well-level fingerprints across labs and replicates.
 \begin{figure}[H]
 \centering
-\includegraphics{figures/tsne_three_panel.png}
+\includegraphics[width=0.75\linewidth]{figures/tsne_three_panel.png}
 \caption{t-SNE for plates}
 \end{figure}
 
@@ -195,7 +195,7 @@ Where let $r_i$ denote the residuals after subtracting the corresponding conditi
 
 \begin{figure}
 \centering
-\includegraphics[width=0.3\linewidth]{figures/variance_no_residual_controls_combined.png}
+\includegraphics[width=0.5\linewidth]{figures/variance_no_residual_controls_combined.png}
 \caption{Variance decomposition of controls}
 \end{figure}
 
@@ -235,14 +235,14 @@ Within-compound spread (IQR and p05–p95) highlights residual heterogeneity. Na
 
 \begin{figure}[H]
 \centering
-\includegraphics{figures/compound_quantile_lines_neg_rz.png}
+\includegraphics[width=0.5\linewidth]{figures/compound_quantile_lines_neg_rz.png}
 \caption{Distribution of the effects of compounds on cell-counts across replicates and labs.}
 \end{figure}
 
 We further highlight this differences in the next plot, where we show the distributions of selected compounds, spanning a range of median effects and variability.
 \begin{figure}
 \centering
-\includegraphics{figures/boxplots_between_tet_noc_plus_topmedian_and_topbelowtet.png}
+\includegraphics[width=0.85\linewidth]{figures/boxplots_between_tet_noc_plus_topmedian_and_topbelowtet.png}
 \caption{Boxplots of some selected compounds}
 \end{figure}
 
@@ -300,15 +300,15 @@ knitr::include_graphics("figures/FMP_consensus_Ward_k5_plate_maps_one_row.png")
 
 The following tables also show the list of compounds which we classify as Toxic or Effective compounds with Unknown MOA. We include a list of Nocodazole like and Tetrandrine like compounds in our github (https://github.com/filippomichelis/604-proj-1.git) as well.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.5\linewidth]{figures/toxic.png}
 \caption{Toxic Compounds}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 \centering
-\includegraphics[width=1.1\linewidth]{figures/eff_unknown_moa.png}
+\includegraphics[width=\linewidth]{figures/eff_unknown_moa.png}
 \caption{Effective Compounds with Unknown MOA}
 \end{figure}
 
