@@ -6,6 +6,8 @@ output:
   html_document: default
 geometry: margin=0.8in
 header-includes:
+  - \usepackage{subcaption}
+  - \usepackage{placeins}
   - \usepackage{float}
 date: "2025-09-17"
 ---
