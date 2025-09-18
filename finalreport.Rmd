@@ -173,7 +173,7 @@ To evaluate reproducibility across labs and replicates, we embed each plate as a
 (3) **Well-wise correlation view (after control standardization)**: Each plate is represented as a vector of per-well standardized cell counts, aligned by well position. Spearman correlations are computed between plates; distances are defined as \(1-\rho\). Embedding these distances with t-SNE focuses directly on position-matched reproducibility across plates. Tight clustering by digit indicates consistent well-level fingerprints across labs and replicates.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.75\linewidth]{figures/tsne_three_panel.png}
+\includegraphics[width=\linewidth]{figures/tsne_three_panel.png}
 \caption{t-SNE for plates}
 \end{figure}
 
@@ -261,7 +261,7 @@ S_{(A,i),(B,j)} = \frac{1}{|W|} \sum_{w \in W}
 $$
 where $x_{w,i}^{(A)}$ represents the standardised feature vector of well $w$ in replicate $i$ of lab A. Here, $i,j \in \{1,\ldots,4\}, A,B \in \{FMP,IMTM,MEDINA,USC\}$ and $W:=$ set of unique well id's. If the treatment effect were dominant in all replications, we would expect these similarities to be close to one and hence $S_{(A,i),(B,j)}$ would be close to one for all $A,b,i,j$.
 
-The heatmap in Figure 12 shows that cross-lab similarities were low overall. Within-site comparisons, however, revealed that the **FMP site** displayed the highest replicate consistency (darker red shades). Consequently, we restricted subsequent clustering analyses to FMP data.
+The heatmap in Figure 16 shows that cross-lab similarities were low overall. Within-site comparisons, however, revealed that the **FMP site** displayed the highest replicate consistency (darker red shades). Consequently, we restricted subsequent clustering analyses to FMP data.
 
 ### Dimensionality reduction and clustering
 For clustering, we projected the standardized FMP feature vectors onto the principal component space. The first 14 principal components (PCs), explaining 80% of the total variance, were retained. For each well, the PC scores were then averaged across replicates, producing a single representative 14-dimensional vector per well. Because each replicate within lab FMP showed highest similarity, they can be assumed to demonstrate effect of treatment in each well independently without any confounding factors. As a result, averaging features of each well across replicates just strengthens the biological signal in the data and avoids identical wells across replicates from clustering together.
@@ -276,13 +276,13 @@ knitr::include_graphics("figures/FMP_capture_rates.png")
 ```
 
 ### Interpretation of clusters
-The capture rate plot (Figure 13) shows that the three controls (DMSO, Nocodazole, Tetrandrine) each fall into separate clusters, validating the effectiveness of the method in identifying the feature vector corresponding to control compounds perfectly. The plot then tells us that
+The capture rate plot (Figure 17) shows that the three controls (DMSO, Nocodazole, Tetrandrine) each fall into separate clusters, validating the effectiveness of the method in identifying the feature vector corresponding to control compounds perfectly. The plot then tells us that
 
 - approximately 70.6% compounds that were tested were neutral like DMSO,
 - about 12.4% function like Nocodazole and inhibit cell division,
 - about 4.2% function like Tetrandrine and implement similar anti-cancer methods,
 
-Examining the distribution of standardized cell counts across clusters (Figure 14), we also observe:
+Examining the distribution of standardized cell counts across clusters (Figure 18), we also observe:
 
 - Cluster 5 has a dangerously low median of within-cluster standardised cell counts. This  indicates that the treatment compounds in the wells of this cluster are likely toxic and kill cells indiscriminately. There are 1.6% of these compounds.
 - Cluster 3 has compounds which result in a negative median of standardised cell counts. This indicates effectiveness, but since their feature vectors were not similar to Nocodazole and Tetrandrine their mechanisms of action (MOA) are subject for further experimentation. There are 11.2% of such compounds.
@@ -291,7 +291,7 @@ Examining the distribution of standardized cell counts across clusters (Figure 1
 knitr::include_graphics("figures/FMP_Ward_median_std_count_crop.png")
 ```
 
-Finally, we visualized the distribution of clusters across plates (Figure 15). This provides a spatial view of how compounds grouped in the clustering analysis.
+Finally, we visualized the distribution of clusters across plates (Figure 19). This provides a spatial view of how compounds grouped in the clustering analysis.
 
 ```{r,fig.cap="Plates colored according to cluster assignment",echo=FALSE,out.width="100%", fig.align='center', fig.pos='H'}
 knitr::include_graphics("figures/FMP_consensus_Ward_k5_plate_maps_one_row.png")
